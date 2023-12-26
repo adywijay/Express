@@ -1,0 +1,98 @@
+<%- contentFor('content'); %>
+<div class="row clearfix">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="card">
+      <div class="header">
+        <h2>
+          HOVER ROWS
+        </h2>
+        <ul class="header-dropdown m-r--5">
+          <li class="dropdown">
+            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              <i class="material-icons">more_vert</i>
+            </a>
+            <ul class="dropdown-menu pull-right">
+              <li><a href="javascript:void(0);">Action</a></li>
+              <li><a href="javascript:void(0);">Another action</a></li>
+              <li><a href="javascript:void(0);">Something else here</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div class="body table-responsive">
+        <table id="req-list" class="table table-hover">
+          <thead>
+            <tr>
+              <th>Nama Lengkap</th>
+              <th>Alamat</th>
+              <th>Kelas</th>
+              <th style="text-align: center;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% data.forEach((row) => { %>
+            <tr>
+              <td><%= row.nama_lengkap %></td>
+              <td><%= row.alamat %></td>
+              <td><%= row.kelas %></td>
+              <td style="text-align: center;">
+                <div class="icon-button-demo sm">
+                  <button type="button" class="btn bg-light-green btn-circle waves-effect waves-circle waves-float" onclick="call_view_edit_bio('<%= row.id_bio %>')">
+                    <i class="material-icons">chat</i>
+                  </button>
+                  <button type="button" class="btn bg-red btn-circle waves-effect waves-circle waves-float" onclick="deltask('<%= row.id_bio %>')">
+                    <i class="material-icons">delete_forever</i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+        <div class="modal fade" id="defaultModal" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title" id="defaultModalLabel">Detail Data</h4>
+              </div>
+              <div class="modal-body">
+                <form id="frm-edit-bio" name="frm-edit-bio">
+                  <div class="row clearfix">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <div class="form-line">
+                          <input hidden type="number" name="id_bio1" id="id_bio1">
+                          <input type="text" id="nama_lengkap1" name="nama_lengkap1" class="form-control" placeholder="Nama Lengkap">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <div class="form-line">
+                          <input type="text" id="alamat1" name="alamat1" class="form-control" placeholder="Alamat">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <div class="form-line">
+                          <input type="text" id="kelas1" name="kelas1" class="form-control" placeholder="Kelas">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-link waves-effect" onclick="update_bio()">Update</button>
+                <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Close</button>
+              </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

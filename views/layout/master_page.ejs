@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="csrf-token" content="<%= csrfToken %>">
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <title><%= judul %></title>
+  <!-- Favicon-->
+  <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
+
+  <script src="/js/jquery-1.11.2.min.js"></script>
+  <%- include('../partials/load_css.ejs'); %>
+</head>
+
+<body class="theme-red">
+  <!-- Page Loader -->
+  <div class="page-loader-wrapper">
+    <div class="loader">
+      <div class="preloader">
+        <div class="spinner-layer pl-red">
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div>
+          <div class="circle-clipper right">
+            <div class="circle"></div>
+          </div>
+        </div>
+      </div>
+      <p>Please wait...</p>
+    </div>
+  </div>
+  <div class="overlay"></div>
+  <nav class="navbar">
+    <div class="container-fluid">
+      <%- include('../partials/load_topnav.ejs'); %>
+    </div>
+  </nav>
+
+  <section>
+    <aside id="leftsidebar" class="sidebar">
+      <div class="user-info">
+        <%- include('../partials/load_detail_user.ejs'); %>
+      </div>
+      <div class="menu">
+        <%- include('../partials/load_sidenav.ejs'); %>
+      </div>
+      <div class="legal">
+        <%- include('../partials/load_footed.ejs'); %>
+      </div>
+    </aside>
+
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <%- content %>
+    </div>
+  </section>
+
+  <%- include('../partials/load_js.ejs'); %>
+  <%- script %>
+</body>
+
+</html>
