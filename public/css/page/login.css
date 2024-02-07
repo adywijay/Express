@@ -1,0 +1,28 @@
+.bg-login {
+    background-image: url(/images/galery/3.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.set-box-card {
+    opacity: 0.6;
+    border-radius: 5px;
+}
+
+.set-logo-card {
+    float: left;
+    height: 44px;
+    padding: .4rem .5rem;
+}
+
+.set-heigh-box {
+    height: 400px !important;
+}
+
+.set-center-position {
+    margin-left: 143px !important;
+}
+
+form {
+    margin-top: 90px !important;
+}

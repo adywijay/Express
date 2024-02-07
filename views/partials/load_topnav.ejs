@@ -1,12 +1,51 @@
 <div class="navbar-header">
   <a href="javascript:void(0);" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false"></a>
   <a href="javascript:void(0);" class="bars"></a>
-  <a class="navbar-brand" href="/">Guest</a>
+  <a class="navbar-brand" href="/dashboard">Guest</a>
 </div>
 <div class="collapse navbar-collapse" id="navbar-collapse">
-  <%#
   <ul class="nav navbar-nav navbar-right">
-    <li class="pull-right"><a href="javascript:void(0);" class="js-right-sidebar" data-close="true"><i class="material-icons">more_vert</i></a></li>
+    <li class="pull-right">
+      <a href="javascript:void(0);" class="hoverable js-right-sidebar" data-close="true" onclick="doLogout()"><i class="material-icons">trending_up</i></a>
+    </li>
   </ul>
-  %>
 </div>
+
+<script>
+  function doLogout() {
+    const csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+    $.ajax({
+      headers: {
+        'X-CSRF-TOKEN': csrfToken
+      },
+      url: "/logout",
+      dataType: 'json',
+      type: "POST",
+      success: function(data) {
+        if (data.code === 200) {
+          Swal.fire({
+            title: data.msg,
+            icon: "success",
+            confirmButtonText: "Ok"
+          }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+              window.location.href = '/auth/' + data.dlink;
+            } else {
+              result.dismiss;
+            }
+          });
+        } else {
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            title: data.msg,
+            showConfirmButton: true,
+            timer: 2500
+          });
+        }
+      }
+    })
+  }
+</script>

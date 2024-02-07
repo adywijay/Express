@@ -1,14 +1,15 @@
 const mysql = require('mysql');
 
-const connection = mysql.createConnection({
+const previlege = {
     host: 'localhost',
     port: 3408,
     user: 'root',
     password: '',
     database: 'expresscrud'
-});
+};
 
-connection.connect((err) => {
+const db_mysql = mysql.createConnection(previlege);
+db_mysql.connect((err) => {
     if (err) {
         console.error('Error connecting to database: ' + err.stack);
         return;
@@ -17,4 +18,5 @@ connection.connect((err) => {
     }
 });
 
-module.exports = connection;
+
+module.exports = { db_mysql};

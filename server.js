@@ -6,18 +6,20 @@
  * ==============================================================================+
  */
 const express = require('express');
-const db_mysql = require('./db/Mysql_connection');;
+const app = express();
+const port = 8005;
+const { db_mysql } = require('./db/Mysql_connection');
 const csrf = require('csurf');
 const path = require('path');
 const ejs = require('ejs');
-const app = express();
-const port = 8080;
 const cookieParser = require('cookie-parser');
 var csrfProtection = csrf({ cookie: true });
 var validator = require('validator');
 var bodyParser = require('body-parser');
 const expressLayouts = require('express-ejs-layouts');
-
+const session = require('express-session');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 
 
@@ -36,11 +38,18 @@ app.use("/plugins", express.static(__dirname + "public/plugins"));
 app.use("/images", express.static(__dirname + "public/images"));
 //------------------------------ End initials static asset file ------------------
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+app.use(session({
+    secret: 'd2d6ff2aa9a76e76e991fa9b5fa21f12099f8360b65e07c3705fa4858c4a6eae4ba9f36934b729b829c03714cc823424b6516dd2010b642b75b70121cb3b3c23',
+    resave: false,
+    saveUninitialized: true
+}));
 app.use(expressLayouts);
 app.set('view engine', 'ejs');
 app.set('layout extractScripts', true) //Enabling to reand and load js file
+app.set('trust proxy', 1);
 //app.set('layout', 'layout/master_page'); Set default parent page
 
 
@@ -55,14 +64,23 @@ app.set('layout extractScripts', true) //Enabling to reand and load js file
  */
 
 app.get('/', csrfProtection, (req, res) => {
+    res.render('layout/front_page', {
+        csrfToken: req.csrfToken(),
+        layout: false,
+        judul: 'Welcome'
+    });
+});
+
+app.get('/dashboard', csrfProtection, checkSignIn, (req, res) => {
     res.render('pages_dynamics/tes', {
         csrfToken: req.csrfToken(),
+        sess: req.session.user,
         layout: 'layout/master_page',
         judul: 'Welcome'
     });
 });
 
-app.get('/view_add_data', csrfProtection, (req, res) => {
+app.get('/view_add_data', csrfProtection, checkSignIn, (req, res) => {
 
     res.render('pages_dynamics/view_insert', {
         csrfToken: req.csrfToken(),
@@ -98,7 +116,7 @@ app.get('/view_add_data', csrfProtection, (req, res) => {
     */
 });
 
-app.post('/do_action_save', csrfProtection, (req, res) => {
+app.post('/do_action_save', csrfProtection, checkSignIn, (req, res) => {
 
     let collect_data = {
         nama_lengkap: req.body.nama_lengkap,
@@ -126,7 +144,7 @@ app.post('/do_action_save', csrfProtection, (req, res) => {
     });
 });
 
-app.get('/view_retrive_data', csrfProtection, (req, res) => {
+app.get('/view_retrive_data', csrfProtection, checkSignIn, (req, res) => {
 
 
     let prepare_query = `SELECT * FROM biodata`;
@@ -161,7 +179,7 @@ app.get('/view_retrive_data', csrfProtection, (req, res) => {
 
 });
 
-app.get('/do_get_by/:id_bio', csrfProtection, (req, res) => {
+app.get('/do_get_by/:id_bio', csrfProtection, checkSignIn, (req, res) => {
 
     let data_form = {
         id_bio: req.params.id_bio
@@ -181,7 +199,7 @@ app.get('/do_get_by/:id_bio', csrfProtection, (req, res) => {
     });
 });
 
-app.put('/do_update_bio', csrfProtection, (req, res) => {
+app.put('/do_update_bio', csrfProtection, checkSignIn, (req, res) => {
 
     let { nama_lengkap, alamat, kelas, id_bio } = req.body;
 
@@ -202,7 +220,7 @@ app.put('/do_update_bio', csrfProtection, (req, res) => {
 });
 
 
-app.delete('/do_delete/:id_bio', csrfProtection, (req, res) => {
+app.delete('/do_delete/:id_bio', csrfProtection, checkSignIn, (req, res) => {
 
     let data_form = {
         id_bio: req.params.id_bio
@@ -223,8 +241,156 @@ app.delete('/do_delete/:id_bio', csrfProtection, (req, res) => {
     });
 });
 
+//------------------------------------------------------------------------------------------- Auth
+function checkSignIn(req, res, next) {
+    if (req.session.user) {
+        next();
+    } else {
+        return res.redirect('/auth/login');
+    }
+}
+app.get('/protected_page', checkSignIn, function (req, res) {
+    // res.render('protected_page', { id: req.session.user.id })
+    const collectSess = req.session.user;
 
+    switch (true) {
+        case collectSess.role === 1:
+            return res.redirect('/dashboard');
+            break
+        default:
+            return res.redirect('/auth/login');
+    }
 
+});
+app.get('/auth/login', csrfProtection, (req, res) => {
+    res.render('layout/login_page', {
+        csrfToken: req.csrfToken(),
+        layout: false,
+        judul: 'Auth'
+    });
+});
+
+app.get('/auth/register', csrfProtection, (req, res) => {
+    res.render('layout/register_page', {
+        csrfToken: req.csrfToken(),
+        layout: false,
+        judul: 'Sign Up'
+    });
+});
+
+app.post('/do_action_register', csrfProtection, (req, res) => {
+    const { username, email, password } = req.body;
+    let prepare_query = 'INSERT INTO users SET ?';
+    let emailexist_query = 'SELECT email FROM users WHERE email = ?';
+    //console.log(req.body.password)
+
+    db_mysql.query(emailexist_query, email, (err, rsl) => {
+        //console.log(err);
+        //console.log(rsl)
+
+        switch (true) {
+            case err:
+                return res.json({
+                    status: false,
+                    code: 500,
+                    msg: err
+                });
+                break;
+            case rsl.length >= 1:
+                return res.json({
+                    status: false,
+                    code: 302,
+                    msg: `${email} already exist`
+                });
+                break;
+
+            default:
+                bcrypt.hash(password, 10, (err, hash) => {
+                    if (err) {
+                        return res.json({
+                            status: false,
+                            code: 500,
+                            msg: 'Internal Server Error'
+                        });
+                    }
+
+                    const rebuildKey = { username, email, password: hash };
+                    db_mysql.query(prepare_query, rebuildKey, (errs, results) => {
+
+                        try {
+                            if (errs) {
+                                return res.json({
+                                    status: false,
+                                    code: 400,
+                                    msg: 'failled registrations'
+                                });
+                            }
+                            return res.json({
+                                status: false,
+                                code: 200,
+                                msg: 'success',
+                                dlink: 'login'
+                            });
+
+                        } catch (e) {
+                            console.log(e.stack);
+                        }
+                    });
+                });
+                break;
+        }
+    });
+});
+app.post('/do_action_login', csrfProtection, (req, res) => {
+    const { username, password } = req.body;
+    let prepare_query = 'SELECT * FROM users WHERE username = ?';
+    db_mysql.query(prepare_query, username, (err, result) => {
+        if (err || result.length === 0) {
+            return res.json({
+                status: false,
+                code: 401,
+                msg: 'username not match'
+            });
+
+        }
+        const user = result[0];
+        bcrypt.compare(password, user.password, (errs, matched) => {
+            if (!matched) {
+                return res.json({
+                    status: false,
+                    code: 401,
+                    msg: 'Password not match'
+                });
+            }
+            req.session.user = user;
+            return res.json({
+                status: true,
+                code: 200,
+                msg: 'Success',
+                dlink: 'protected_page'
+            });
+        });
+    });
+});
+
+app.post('/logout', checkSignIn, (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.json({
+                status: false,
+                code: 500,
+                msg: 'logout failed'
+            });
+            console.error('Gagal logout:', err);
+        }
+        return res.json({
+            status: true,
+            code: 200,
+            msg: 'Success',
+            dlink: 'login'
+        });
+    });
+});
 
 /**
  * ==============================================================================+

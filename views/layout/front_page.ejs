@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="csrf-token" content="<%= csrfToken %>">
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <title><%= judul %></title>
+  <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <script src="/js/jquery-1.11.2.min.js"></script>
+  <%- include('../partials/front_page/css'); %>
+</head>
+
+<body>
+  <div id="loader-wrapper">
+    <div id="loader"></div>
+  </div>
+  <div id="content-list">
+    <nav class="white" role="navigation">
+      <div class="nav-wrapper container">
+        <a href="/" class="brand-logo" style="color: #e65100;"><i>Express</i></a>
+        <ul class="left hide-on-med-and-down" style="margin-left: 1030px;">
+          <li><a class="waves-effect waves-light orange darken-3 btn-small" href="javascript:void(0)" id="login-target">Login</a></li>
+        </ul>
+
+        <ul id="nav-mobile" class="sidenav">
+          <li><a class="waves-effect waves-light orange darken-3 btn-small" href="javascript:void(0)" id="login-target-mobile">Login</a></li>
+        </ul>
+        <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons red-text">menu</i></a>
+      </div>
+    </nav>
+
+    <div id="index-banner" class="parallax-container">
+      <div class="section no-pad-bot">
+        <div class="container marigin-capt-homepage">
+          <br><br>
+          <h1 class="header center light">Express JS</h1>
+          <div class="row center">
+            <h5 class="header col s12 light">
+              Express is a minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications.</h5>
+          </div>
+          <div class="row center">
+            <a href="https://expressjs.com/" class="waves-effect waves-light orange darken-3 btn-small">
+              <i class="material-icons left">cloud_download</i>Get Started
+            </a>
+            <a class="waves-effect waves-light orange darken-3 btn-small" href="javascript:void(0)" id="register">
+              <i class="material-icons right">account_box</i>Register
+            </a>
+          </div>
+          <br><br>
+        </div>
+      </div>
+      <div class="parallax">
+        <img src="/images/od.jpg" alt="">
+        <div class="waveWrapper waveAnimation">
+          <div class="bgTop">
+            <div class="wave waveTop" style="background-image: url('http://front-end-noobs.com/jecko/img/wave-top.png')"></div>
+          </div>
+          <div class=" bgBottom">
+            <div class="wave waveBottom" style="background-image: url('http://front-end-noobs.com/jecko/img/wave-bot.png')"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="container">
+      <div class="section">
+        <div class="row">
+          <div class="col s12 m4">
+            <div class="icon-block">
+              <h2 class="center brown-text"><i class="small material-icons">dashboard</i></h2>
+              <h5 class="center">Template Admin BSB</h5>
+              <p class="light">We are using the BSB Material Admin template for the interface display</p>
+            </div>
+          </div>
+          <div class="col s12 m4">
+            <div class="icon-block">
+              <h2 class="center brown-text"><i class="material-icons">pageview</i></h2>
+              <h5 class="center">EJS Template Engine</h5>
+              <p class="light">We are using the Ejs template engine for organizing the view template system</p>
+            </div>
+          </div>
+          <div class="col s12 m4">
+            <div class="icon-block">
+              <h2 class="center brown-text"><i class="material-icons">storage</i></h2>
+              <h5 class="center">Mysql DB</h5>
+              <p class="light">We are using the MySQL RDBMS for basic CRUD operations</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="page-footer deep-orange darken-3">
+      <div class="container">
+        <div class="row">
+          <div class="col l6 s12">
+            <h5 class="white-text">Company Bio</h5>
+            <p class="grey-text text-lighten-4">We are a team of college students working on this project like it's our full time job. Any amount would help support and continue development on this project and is greatly appreciated.</p>
+
+
+          </div>
+          <div class="col l3 s12">
+            <h5 class="white-text">Settings</h5>
+            <ul>
+              <li><a class="white-text" href="#!">Link 1</a></li>
+              <li><a class="white-text" href="#!">Link 2</a></li>
+              <li><a class="white-text" href="#!">Link 3</a></li>
+              <li><a class="white-text" href="#!">Link 4</a></li>
+            </ul>
+          </div>
+          <div class="col l3 s12">
+            <h5 class="white-text">Connect</h5>
+            <ul>
+              <li><a class="white-text" href="#!">Link 1</a></li>
+              <li><a class="white-text" href="#!">Link 2</a></li>
+              <li><a class="white-text" href="#!">Link 3</a></li>
+              <li><a class="white-text" href="#!">Link 4</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-copyright">
+        <div class="container center-align">
+          <i>Portofolio Backend NodeJs</i>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <%- include('../partials/front_page/js'); %>
+  <script>
+    $('#login-target').click(function() {
+      window.location.replace('/auth/login');
+    });
+    $('#register').click(function() {
+      window.location.replace('/auth/register');
+    });
+  </script>
+</body>
+
+</html>
