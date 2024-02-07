@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+     "test": "mocha ./test/*.test.js",
     "dev": "nodemon server.js"
   },
   "keywords": [],
@@ -23,9 +23,12 @@
     "validator": "^13.11.0"
   },
   "devDependencies": {
+    "chai": "^5.0.3",
     "cookie-session": "^2.1.0",
     "express-mysql-session": "^3.0.0",
     "jsonwebtoken": "^9.0.2",
-    "nodemon": "^3.0.2"
+    "mocha": "^10.2.0",
+    "nodemon": "^3.0.2",
+    "supertest": "^6.3.4"
   }
 }
